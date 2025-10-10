@@ -1,5 +1,7 @@
 #pragma once
 #include "Curve3D.h"
+
+#define _USE_MATH_DEFINES
 #include <cmath>
 
 class Helix3D : Curve3D
