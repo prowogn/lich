@@ -130,12 +130,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Circle.cpp" />
+    <ClCompile Include="Ellipse.cpp" />
     <ClCompile Include="Helix.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Point3D.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Circle.h" />
     <ClInclude Include="Curve3D.h" />
+    <ClInclude Include="Ellipse.h" />
     <ClInclude Include="Helix.h" />
     <ClInclude Include="Point3D.h" />
   </ItemGroup>

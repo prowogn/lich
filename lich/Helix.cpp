@@ -1,8 +1,10 @@
-#define _USE_MATH_DEFINES
+﻿#define _USE_MATH_DEFINES
 #include "Helix.h"
+#include <cmath>
 
-Helix3D::Helix3D(double radius, double step)
-	: radius(radius), step(step) { }
+Helix3D::Helix3D(double radius, double step, int turns)
+    : radius(radius), step(step), turns(turns) {
+}
 
 Point3D Helix3D::getPoint(double t) const
 {
