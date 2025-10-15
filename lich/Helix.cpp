@@ -1,3 +1,4 @@
+#define _USE_MATH_DEFINES
 #include "Helix.h"
 
 Helix3D::Helix3D(double radius, double step)
