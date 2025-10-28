@@ -107,6 +107,27 @@ int main()
     bool panelVisible = true;
     bool guiMode = false; // по умолчанию - режим камеры
 
+    // Окна
+    bool showAddWindow = false;
+    bool showEditWindow = false;
+
+    // Переменные для добавления/редактирования
+    int curveType = 0; // 0=Circle, 1=Ellipse, 2=Helix
+    char circleRadius[32] = "1.0";
+    char ellipseA[32] = "1.2";
+    char ellipseB[32] = "0.7";
+    char helixRadius[32] = "1.0";
+    char helixStep[32] = "0.4";
+    char helixTurns[32] = "5";
+
+    // Флаги для текстовых полей
+    bool editCircleRadius = false;
+    bool editEllipseA = false;
+    bool editEllipseB = false;
+    bool editHelixRadius = false;
+    bool editHelixStep = false;
+    bool editHelixTurns = false;
+
     while (!WindowShouldClose())
     {
         float dt = GetFrameTime();
@@ -150,16 +171,42 @@ int main()
             Rectangle panel = { 960, 0, 320, (float)screenH };
             GuiPanel(panel, "Curve Editor");
 
-            // Добавление
-            if (GuiButton({ 980, 40, 120, 30 }, "Add Circle"))
-                curves.push_back(std::make_shared<Circle3D>(1.0));
-            if (GuiButton({ 980, 80, 120, 30 }, "Add Ellipse"))
-                curves.push_back(std::make_shared<Ellipse3D>(1.2, 0.7));
-            if (GuiButton({ 980, 120, 120, 30 }, "Add Helix"))
-                curves.push_back(std::make_shared<Helix3D>(1.0, 0.4));
+            // Основные кнопки
+            if (GuiButton({ 980, 40, 120, 30 }, "Add Curve"))
+                showAddWindow = true;
+
+            if (GuiButton({ 1120, 40, 120, 30 }, "Edit Curve") && selectedCurve >= 0)
+            {
+                showEditWindow = true;
+                // Загружаем данные выбранной кривой
+                if (auto circle = std::dynamic_pointer_cast<Circle3D>(curves[selectedCurve]))
+                {
+                    curveType = 0;
+                    snprintf(circleRadius, 32, "%.2f", circle->getRadius());
+                }
+                else if (auto ellipse = std::dynamic_pointer_cast<Ellipse3D>(curves[selectedCurve]))
+                {
+                    curveType = 1;
+                    snprintf(ellipseA, 32, "%.2f", ellipse->getA());
+                    snprintf(ellipseB, 32, "%.2f", ellipse->getB());
+                }
+                else if (auto helix = std::dynamic_pointer_cast<Helix3D>(curves[selectedCurve]))
+                {
+                    curveType = 2;
+                    snprintf(helixRadius, 32, "%.2f", helix->getRadius());
+                    snprintf(helixStep, 32, "%.2f", helix->getStep());
+                    snprintf(helixTurns, 32, "%d", helix->getTurns());
+                }
+            }
+
+            if (GuiButton({ 1120, 80, 120, 30 }, "Delete") && selectedCurve >= 0)
+            {
+                curves.erase(curves.begin() + selectedCurve);
+                selectedCurve = -1;
+            }
 
             // Список кривых
-            DrawText("Curves:", 980, 170, 20, DARKGRAY);
+            DrawText("Curves:", 980, 120, 20, DARKGRAY);
             for (int i = 0; i < curves.size(); ++i)
             {
                 std::string label = std::to_string(i + 1) + ". ";
@@ -167,19 +214,149 @@ int main()
                 else if (std::dynamic_pointer_cast<Ellipse3D>(curves[i])) label += "Ellipse";
                 else if (std::dynamic_pointer_cast<Helix3D>(curves[i])) label += "Helix";
 
-                if (GuiButton({ 980, 200.0f + i * 40, 140, 30 }, label.c_str()))
+                if (GuiButton({ 980, 150.0f + i * 40, 140, 30 }, label.c_str()))
                     selectedCurve = i;
             }
+        }
 
-            // Удаление выбранной
-            if (selectedCurve >= 0 && selectedCurve < (int)curves.size())
+        // Окно добавления кривой
+        if (showAddWindow)
+        {
+            Rectangle addWindow = { screenW / 2 - 200, screenH / 2 - 200, 400, 300 };
+            GuiWindowBox(addWindow, "Add New Curve");
+
+            // Выбор типа кривой
+            GuiLabel({ addWindow.x + 20, addWindow.y + 40, 100, 25 }, "Curve Type:");
+            GuiComboBox({ addWindow.x + 120, addWindow.y + 40, 200, 25 }, "Circle;Ellipse;Helix", &curveType);
+
+            // Параметры в зависимости от типа
+            if (curveType == 0) // Circle
             {
-                if (GuiButton({ 1120, 40, 120, 30 }, "Delete"))
-                {
-                    curves.erase(curves.begin() + selectedCurve);
-                    selectedCurve = -1;
+                GuiLabel({ addWindow.x + 20, addWindow.y + 80, 100, 25 }, "Radius:");
+                GuiTextBox({ addWindow.x + 120, addWindow.y + 80, 200, 25 }, circleRadius, 32, editCircleRadius);
+            }
+            else if (curveType == 1) // Ellipse
+            {
+                GuiLabel({ addWindow.x + 20, addWindow.y + 80, 100, 25 }, "A:");
+                GuiTextBox({ addWindow.x + 120, addWindow.y + 80, 200, 25 }, ellipseA, 32, editEllipseA);
+                GuiLabel({ addWindow.x + 20, addWindow.y + 120, 100, 25 }, "B:");
+                GuiTextBox({ addWindow.x + 120, addWindow.y + 120, 200, 25 }, ellipseB, 32, editEllipseB);
+            }
+            else if (curveType == 2) // Helix
+            {
+                GuiLabel({ addWindow.x + 20, addWindow.y + 80, 100, 25 }, "Radius:");
+                GuiTextBox({ addWindow.x + 120, addWindow.y + 80, 200, 25 }, helixRadius, 32, editHelixRadius);
+                GuiLabel({ addWindow.x + 20, addWindow.y + 120, 100, 25 }, "Step:");
+                GuiTextBox({ addWindow.x + 120, addWindow.y + 120, 200, 25 }, helixStep, 32, editHelixStep);
+                GuiLabel({ addWindow.x + 20, addWindow.y + 160, 100, 25 }, "Turns:");
+                GuiTextBox({ addWindow.x + 120, addWindow.y + 160, 200, 25 }, helixTurns, 32, editHelixTurns);
+            }
+
+            // Кнопки OK/Cancel
+            if (GuiButton({ addWindow.x + 100, addWindow.y + 250, 80, 30 }, "OK"))
+            {
+                try {
+                    if (curveType == 0) // Circle
+                    {
+                        double radius = std::stod(circleRadius);
+                        curves.push_back(std::make_shared<Circle3D>(radius));
+                    }
+                    else if (curveType == 1) // Ellipse
+                    {
+                        double a = std::stod(ellipseA);
+                        double b = std::stod(ellipseB);
+                        curves.push_back(std::make_shared<Ellipse3D>(a, b));
+                    }
+                    else if (curveType == 2) // Helix
+                    {
+                        double radius = std::stod(helixRadius);
+                        double step = std::stod(helixStep);
+                        int turns = std::stoi(helixTurns);
+                        curves.push_back(std::make_shared<Helix3D>(radius, step, turns));
+                    }
+                    showAddWindow = false;
+                }
+                catch (const std::exception& e) {
+                    // В случае ошибки ввода просто закрываем окно
+                    showAddWindow = false;
                 }
             }
+
+            if (GuiButton({ addWindow.x + 220, addWindow.y + 250, 80, 30 }, "Cancel"))
+                showAddWindow = false;
+        }
+
+        // Окно редактирования кривой
+        if (showEditWindow && selectedCurve >= 0)
+        {
+            Rectangle editWindow = { screenW / 2 - 200, screenH / 2 - 200, 400, 300 };
+            GuiWindowBox(editWindow, "Edit Curve");
+
+            // Отображаем тип текущей кривой
+            std::string typeLabel = "Type: ";
+            if (auto circle = std::dynamic_pointer_cast<Circle3D>(curves[selectedCurve])) typeLabel += "Circle";
+            else if (auto ellipse = std::dynamic_pointer_cast<Ellipse3D>(curves[selectedCurve])) typeLabel += "Ellipse";
+            else if (auto helix = std::dynamic_pointer_cast<Helix3D>(curves[selectedCurve])) typeLabel += "Helix";
+
+            GuiLabel({ editWindow.x + 20, editWindow.y + 40, 360, 25 }, typeLabel.c_str());
+
+            // Параметры в зависимости от типа
+            if (auto circle = std::dynamic_pointer_cast<Circle3D>(curves[selectedCurve]))
+            {
+                GuiLabel({ editWindow.x + 20, editWindow.y + 80, 100, 25 }, "Radius:");
+                GuiTextBox({ editWindow.x + 120, editWindow.y + 80, 200, 25 }, circleRadius, 32, editCircleRadius);
+            }
+            else if (auto ellipse = std::dynamic_pointer_cast<Ellipse3D>(curves[selectedCurve]))
+            {
+                GuiLabel({ editWindow.x + 20, editWindow.y + 80, 100, 25 }, "A:");
+                GuiTextBox({ editWindow.x + 120, editWindow.y + 80, 200, 25 }, ellipseA, 32, editEllipseA);
+                GuiLabel({ editWindow.x + 20, editWindow.y + 120, 100, 25 }, "B:");
+                GuiTextBox({ editWindow.x + 120, editWindow.y + 120, 200, 25 }, ellipseB, 32, editEllipseB);
+            }
+            else if (auto helix = std::dynamic_pointer_cast<Helix3D>(curves[selectedCurve]))
+            {
+                GuiLabel({ editWindow.x + 20, editWindow.y + 80, 100, 25 }, "Radius:");
+                GuiTextBox({ editWindow.x + 120, editWindow.y + 80, 200, 25 }, helixRadius, 32, editHelixRadius);
+                GuiLabel({ editWindow.x + 20, editWindow.y + 120, 100, 25 }, "Step:");
+                GuiTextBox({ editWindow.x + 120, editWindow.y + 120, 200, 25 }, helixStep, 32, editHelixStep);
+                GuiLabel({ editWindow.x + 20, editWindow.y + 160, 100, 25 }, "Turns:");
+                GuiTextBox({ editWindow.x + 120, editWindow.y + 160, 200, 25 }, helixTurns, 32, editHelixTurns);
+            }
+
+            // Кнопки Save/Cancel
+            if (GuiButton({ editWindow.x + 100, editWindow.y + 250, 80, 30 }, "Save"))
+            {
+                try {
+                    if (auto circle = std::dynamic_pointer_cast<Circle3D>(curves[selectedCurve]))
+                    {
+                        double radius = std::stod(circleRadius);
+                        curves[selectedCurve] = std::make_shared<Circle3D>(radius);
+                    }
+                    else if (auto ellipse = std::dynamic_pointer_cast<Ellipse3D>(curves[selectedCurve]))
+                    {
+                        double a = std::stod(ellipseA);
+                        double b = std::stod(ellipseB);
+                        curves[selectedCurve] = std::make_shared<Ellipse3D>(a, b);
+                    }
+                    else if (auto helix = std::dynamic_pointer_cast<Helix3D>(curves[selectedCurve]))
+                    {
+                        double radius = std::stod(helixRadius);
+                        double step = std::stod(helixStep);
+                        int turns = std::stoi(helixTurns);
+                        helix->setRadius(radius);
+                        helix->setStep(step);
+                        helix->setTurns(turns);
+                    }
+                    showEditWindow = false;
+                }
+                catch (const std::exception& e) {
+                    // В случае ошибки ввода просто закрываем окно
+                    showEditWindow = false;
+                }
+            }
+
+            if (GuiButton({ editWindow.x + 220, editWindow.y + 250, 80, 30 }, "Cancel"))
+                showEditWindow = false;
         }
 
         DrawText("WASD + Mouse = Move camera", 10, 10, 18, DARKGRAY);
