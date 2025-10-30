@@ -1,13 +1,14 @@
 #include "Circle.h"
 
 Circle3D::Circle3D(double radius)
-    : radius(radius) {  }
+    : radius(radius), position(0, 0, 0) {
+}
 
 Point3D Circle3D::getPoint(double t) const
 {
-    double x = radius * cos(t);
-    double y = radius * sin(t);
-    double z = 0.0;
+    double x = radius * cos(t) + position.x;
+    double y = radius * sin(t) + position.y;
+    double z = 0.0 + position.z;
     return Point3D(x, y, z);
 }
 

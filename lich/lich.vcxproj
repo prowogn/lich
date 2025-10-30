@@ -141,6 +141,7 @@
     <ClInclude Include="Curve3D.h" />
     <ClInclude Include="Ellipse.h" />
     <ClInclude Include="Helix.h" />
+    <ClInclude Include="main.h" />
     <ClInclude Include="Point3D.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

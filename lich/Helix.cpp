@@ -3,14 +3,14 @@
 #include <cmath>
 
 Helix3D::Helix3D(double radius, double step, int turns)
-    : radius(radius), step(step), turns(turns) {
+    : radius(radius), step(step), turns(turns), position(0, 0, 0) {
 }
 
 Point3D Helix3D::getPoint(double t) const
 {
-    double x = radius * cos(t);
-    double y = radius * sin(t);
-    double z = step * t / (2 * M_PI);
+    double x = radius * cos(t) + position.x;
+    double y = radius * sin(t) + position.y;
+    double z = step * t / (2 * M_PI) + position.z;
     return Point3D(x, y, z);
 }
 
