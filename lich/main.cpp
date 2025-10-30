@@ -204,6 +204,10 @@ int main()
     char posY[32] = "0.0";
     char posZ[32] = "0.0";
 
+    // Поле для ввода t и флаг редактирования
+    char tValue[32] = "0.0";
+    bool editTValue = false;
+
     // Флаги для текстовых полей
     bool editCircleRadius = false;
     bool editEllipseA = false;
@@ -324,6 +328,51 @@ int main()
                 if (GuiButton({ 980, 150.0f + i * 40, 140, 30 }, label.c_str()))
                     selectedCurve = i;
             }
+
+            // Поле для ввода t и кнопка Calculate
+            float tInputY = 150.0f + curves.size() * 40 + 20;
+            GuiLabel({ 980, tInputY, 100, 25 }, "t value:");
+            if (GuiTextBox({ 980, tInputY + 30, 100, 25 }, tValue, 32, editTValue)) {
+                editTValue = !editTValue;
+            }
+
+            if (GuiButton({ 1090, tInputY + 30, 120, 30 }, "Calculate") && selectedCurve >= 0) {
+                try {
+                    double t = std::stod(tValue);
+                    Point3D point = curves[selectedCurve]->getPoint(t);
+                    Point3D derivative = curves[selectedCurve]->getDerivative(t);
+
+                    std::cout << "=== Calculation for t = " << t << " ===" << std::endl;
+                    std::cout << "Selected curve " << selectedCurve + 1 << ": ";
+                    if (auto circle = std::dynamic_pointer_cast<Circle3D>(curves[selectedCurve]))
+                        std::cout << "Circle (r=" << circle->getRadius() << ")";
+                    else if (auto ellipse = std::dynamic_pointer_cast<Ellipse3D>(curves[selectedCurve]))
+                        std::cout << "Ellipse (a=" << ellipse->getA() << ", b=" << ellipse->getB() << ")";
+                    else if (auto helix = std::dynamic_pointer_cast<Helix3D>(curves[selectedCurve]))
+                        std::cout << "Helix (r=" << helix->getRadius() << ", step=" << helix->getStep() << ", turns=" << helix->getTurns() << ")";
+
+                    std::cout << "\n  Point: " << point;
+                    std::cout << "\n  Derivative: " << derivative << std::endl << std::endl;
+                }
+                catch (const std::exception& e) {
+                    std::cout << "Error: Invalid t value" << std::endl;
+                }
+            }
+        }
+
+        // Обработка фокуса для текстовых полей
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+            Vector2 mousePos = GetMousePosition();
+            editCircleRadius = CheckCollisionPointRec(mousePos, { 980, 150.0f + curves.size() * 40 + 50, 100, 25 });
+            editEllipseA = CheckCollisionPointRec(mousePos, { 980, 150.0f + curves.size() * 40 + 50, 100, 25 });
+            editEllipseB = CheckCollisionPointRec(mousePos, { 980, 150.0f + curves.size() * 40 + 90, 100, 25 });
+            editHelixRadius = CheckCollisionPointRec(mousePos, { 980, 150.0f + curves.size() * 40 + 50, 100, 25 });
+            editHelixStep = CheckCollisionPointRec(mousePos, { 980, 150.0f + curves.size() * 40 + 90, 100, 25 });
+            editHelixTurns = CheckCollisionPointRec(mousePos, { 980, 150.0f + curves.size() * 40 + 130, 100, 25 });
+            editPosX = CheckCollisionPointRec(mousePos, { 980, 150.0f + curves.size() * 40 + 170, 60, 25 });
+            editPosY = CheckCollisionPointRec(mousePos, { 1050, 150.0f + curves.size() * 40 + 170, 60, 25 });
+            editPosZ = CheckCollisionPointRec(mousePos, { 1120, 150.0f + curves.size() * 40 + 170, 60, 25 });
+            editTValue = CheckCollisionPointRec(mousePos, { 980, 150.0f + curves.size() * 40 + 50, 100, 25 });
         }
 
         // Окно добавления кривой
