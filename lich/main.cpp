@@ -354,32 +354,44 @@ int main()
             if (curveType == 0) // Circle
             {
                 GuiLabel({ addWindow.x + 20, addWindow.y + 80, 100, 25 }, "Radius:");
-                GuiTextBox({ addWindow.x + 120, addWindow.y + 80, 200, 25 }, circleRadius, 32, editCircleRadius);
+                if (GuiTextBox({ addWindow.x + 120, addWindow.y + 80, 200, 25 }, circleRadius, 32, editCircleRadius)) {
+                    editCircleRadius = !editCircleRadius;
+                }
             }
             else if (curveType == 1) // Ellipse
             {
                 GuiLabel({ addWindow.x + 20, addWindow.y + 80, 100, 25 }, "A:");
-                GuiTextBox({ addWindow.x + 120, addWindow.y + 80, 200, 25 }, ellipseA, 32, editEllipseA);
+                if (GuiTextBox({ addWindow.x + 120, addWindow.y + 80, 200, 25 }, ellipseA, 32, editEllipseA)) {
+                    editEllipseA = !editEllipseA;
+                }
                 GuiLabel({ addWindow.x + 20, addWindow.y + 120, 100, 25 }, "B:");
-                GuiTextBox({ addWindow.x + 120, addWindow.y + 120, 200, 25 }, ellipseB, 32, editEllipseB);
+                if (GuiTextBox({ addWindow.x + 120, addWindow.y + 120, 200, 25 }, ellipseB, 32, editEllipseB)) {
+                    editEllipseB = !editEllipseB;
+                }
             }
             else if (curveType == 2) // Helix
             {
                 GuiLabel({ addWindow.x + 20, addWindow.y + 80, 100, 25 }, "Radius:");
-                GuiTextBox({ addWindow.x + 120, addWindow.y + 80, 200, 25 }, helixRadius, 32, editHelixRadius);
+                if (GuiTextBox({ addWindow.x + 120, addWindow.y + 80, 200, 25 }, helixRadius, 32, editHelixRadius)) {
+                    editHelixRadius = !editHelixRadius;
+                }
                 GuiLabel({ addWindow.x + 20, addWindow.y + 120, 100, 25 }, "Step:");
-                GuiTextBox({ addWindow.x + 120, addWindow.y + 120, 200, 25 }, helixStep, 32, editHelixStep);
+                if (GuiTextBox({ addWindow.x + 120, addWindow.y + 120, 200, 25 }, helixStep, 32, editHelixStep)) {
+                    editHelixStep = !editHelixStep;
+                }
                 GuiLabel({ addWindow.x + 20, addWindow.y + 160, 100, 25 }, "Turns:");
-                GuiTextBox({ addWindow.x + 120, addWindow.y + 160, 200, 25 }, helixTurns, 32, editHelixTurns);
+                if (GuiTextBox({ addWindow.x + 120, addWindow.y + 160, 200, 25 }, helixTurns, 32, editHelixTurns)) {
+                    editHelixTurns = !editHelixTurns;
+                }
             }
 
             // Позиция
             GuiLabel({ addWindow.x + 20, addWindow.y + 200, 100, 25 }, "Position:");
-            GuiTextBox({ addWindow.x + 120, addWindow.y + 200, 60, 25 }, posX, 32, editPosX);
+            if (GuiTextBox({ addWindow.x + 120, addWindow.y + 200, 60, 25 }, posX, 32, editPosX)) editPosX = !editPosX;
             GuiLabel({ addWindow.x + 190, addWindow.y + 200, 20, 25 }, "Y:");
-            GuiTextBox({ addWindow.x + 210, addWindow.y + 200, 60, 25 }, posY, 32, editPosY);
+            if (GuiTextBox({ addWindow.x + 210, addWindow.y + 200, 60, 25 }, posY, 32, editPosY)) editPosY = !editPosY;
             GuiLabel({ addWindow.x + 280, addWindow.y + 200, 20, 25 }, "Z:");
-            GuiTextBox({ addWindow.x + 300, addWindow.y + 200, 60, 25 }, posZ, 32, editPosZ);
+            if (GuiTextBox({ addWindow.x + 300, addWindow.y + 200, 60, 25 }, posZ, 32, editPosZ)) editPosZ = !editPosZ;
 
             // Кнопки OK/Cancel
             if (GuiButton({ addWindow.x + 100, addWindow.y + 280, 80, 30 }, "OK"))
@@ -436,27 +448,50 @@ int main()
 
             GuiLabel({ editWindow.x + 20, editWindow.y + 40, 360, 25 }, typeLabel.c_str());
 
+            // Обработка фокуса для текстовых полей в Edit Window
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+                Vector2 mousePos = GetMousePosition();
+                editCircleRadius = CheckCollisionPointRec(mousePos, { editWindow.x + 120, editWindow.y + 80, 200, 25 });
+                editEllipseA = CheckCollisionPointRec(mousePos, { editWindow.x + 120, editWindow.y + 80, 200, 25 });
+                editEllipseB = CheckCollisionPointRec(mousePos, { editWindow.x + 120, editWindow.y + 120, 200, 25 });
+                editHelixRadius = CheckCollisionPointRec(mousePos, { editWindow.x + 120, editWindow.y + 80, 200, 25 });
+                editHelixStep = CheckCollisionPointRec(mousePos, { editWindow.x + 120, editWindow.y + 120, 200, 25 });
+                editHelixTurns = CheckCollisionPointRec(mousePos, { editWindow.x + 120, editWindow.y + 160, 200, 25 });
+            }
+
             // Параметры в зависимости от типа
             if (auto circle = std::dynamic_pointer_cast<Circle3D>(curves[selectedCurve]))
             {
                 GuiLabel({ editWindow.x + 20, editWindow.y + 80, 100, 25 }, "Radius:");
-                GuiTextBox({ editWindow.x + 120, editWindow.y + 80, 200, 25 }, circleRadius, 32, editCircleRadius);
+                if (GuiTextBox({ editWindow.x + 120, editWindow.y + 80, 200, 25 }, circleRadius, 32, editCircleRadius)) {
+                    editCircleRadius = !editCircleRadius;
+                }
             }
             else if (auto ellipse = std::dynamic_pointer_cast<Ellipse3D>(curves[selectedCurve]))
             {
                 GuiLabel({ editWindow.x + 20, editWindow.y + 80, 100, 25 }, "A:");
-                GuiTextBox({ editWindow.x + 120, editWindow.y + 80, 200, 25 }, ellipseA, 32, editEllipseA);
+                if (GuiTextBox({ editWindow.x + 120, editWindow.y + 80, 200, 25 }, ellipseA, 32, editEllipseA)) {
+                    editEllipseA = !editEllipseA;
+                }
                 GuiLabel({ editWindow.x + 20, editWindow.y + 120, 100, 25 }, "B:");
-                GuiTextBox({ editWindow.x + 120, editWindow.y + 120, 200, 25 }, ellipseB, 32, editEllipseB);
+                if (GuiTextBox({ editWindow.x + 120, editWindow.y + 120, 200, 25 }, ellipseB, 32, editEllipseB)) {
+                    editEllipseB = !editEllipseB;
+                }
             }
             else if (auto helix = std::dynamic_pointer_cast<Helix3D>(curves[selectedCurve]))
             {
                 GuiLabel({ editWindow.x + 20, editWindow.y + 80, 100, 25 }, "Radius:");
-                GuiTextBox({ editWindow.x + 120, editWindow.y + 80, 200, 25 }, helixRadius, 32, editHelixRadius);
+                if (GuiTextBox({ editWindow.x + 120, editWindow.y + 80, 200, 25 }, helixRadius, 32, editHelixRadius)) {
+                    editHelixRadius = !editHelixRadius;
+                }
                 GuiLabel({ editWindow.x + 20, editWindow.y + 120, 100, 25 }, "Step:");
-                GuiTextBox({ editWindow.x + 120, editWindow.y + 120, 200, 25 }, helixStep, 32, editHelixStep);
+                if (GuiTextBox({ editWindow.x + 120, editWindow.y + 120, 200, 25 }, helixStep, 32, editHelixStep)) {
+                    editHelixStep = !editHelixStep;
+                }
                 GuiLabel({ editWindow.x + 20, editWindow.y + 160, 100, 25 }, "Turns:");
-                GuiTextBox({ editWindow.x + 120, editWindow.y + 160, 200, 25 }, helixTurns, 32, editHelixTurns);
+                if (GuiTextBox({ editWindow.x + 120, editWindow.y + 160, 200, 25 }, helixTurns, 32, editHelixTurns)) {
+                    editHelixTurns = !editHelixTurns;
+                }
             }
 
             // Кнопки Save/Cancel
