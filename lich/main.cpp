@@ -269,7 +269,7 @@ int main()
                 {
                     double t = (2.0 * M_PI * j) / 8.0;
                     Point3D p = c->getPoint(t);
-                    DrawSphere(ToVec3(p), 0.1f, YELLOW);
+                    DrawSphere(ToVec3(p), 0.1f, PURPLE);
                 }
             }
         }
