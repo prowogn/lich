@@ -260,6 +260,18 @@ int main()
             if (std::dynamic_pointer_cast<Ellipse3D>(c)) col = GREEN;
             if (std::dynamic_pointer_cast<Helix3D>(c)) col = BLUE;
             DrawCurve3D(c, 300, col);
+
+            // Для выбранной кривой дополнительно рисуем маркеры
+            if (i == selectedCurve)
+            {
+                // Рисуем несколько сфер вдоль кривой для выделения
+                for (int j = 0; j < 8; j++)
+                {
+                    double t = (2.0 * M_PI * j) / 8.0;
+                    Point3D p = c->getPoint(t);
+                    DrawSphere(ToVec3(p), 0.1f, YELLOW);
+                }
+            }
         }
 
         EndMode3D();
