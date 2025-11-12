@@ -131,18 +131,23 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Circle.cpp" />
+    <ClCompile Include="drawing.cpp" />
     <ClCompile Include="Ellipse.cpp" />
+    <ClCompile Include="gui.cpp" />
     <ClCompile Include="Helix.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Point3D.cpp" />
+    <ClCompile Include="tasks.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Circle.h" />
     <ClInclude Include="Curve3D.h" />
+    <ClInclude Include="drawing.h" />
     <ClInclude Include="Ellipse.h" />
+    <ClInclude Include="gui.h" />
     <ClInclude Include="Helix.h" />
-    <ClInclude Include="main.h" />
     <ClInclude Include="Point3D.h" />
+    <ClInclude Include="tasks.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
