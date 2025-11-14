@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include "Point3D.h"
 #include "Curve3D.h"
 #include "Helix.h"
@@ -6,6 +6,7 @@
 #include "Ellipse.h"
 #include <vector>
 #include <memory>
+#include <string>
 
 struct AppState {
     std::vector<std::shared_ptr<Curve3D>> curves;
@@ -16,24 +17,30 @@ struct AppState {
     bool showEditWindow;
     bool showTaskWindow;
 
-    // Переменные для добавления/редактирования
     int curveType;
-    char circleRadius[32];
-    char ellipseA[32];
-    char ellipseB[32];
-    char helixRadius[32];
-    char helixStep[32];
-    char helixTurns[32];
-    char posX[32];
-    char posY[32];
-    char posZ[32];
-    char tValue[32];
+    std::string circleRadius;
+    std::string ellipseA;
+    std::string ellipseB;
+    std::string helixRadius;
+    std::string helixStep;
+    std::string helixTurns;
+    std::string posX;
+    std::string posY;
+    std::string posZ;
+    std::string rotX;
+    std::string rotY;
+    std::string rotZ;
+    std::string tValue;
 
-    // Флаги редактирования
     bool editCircleRadius, editEllipseA, editEllipseB;
     bool editHelixRadius, editHelixStep, editHelixTurns;
     bool editPosX, editPosY, editPosZ;
+    bool editRotX, editRotY, editRotZ;
     bool editTValue;
+
+    Point3D currentPoint;
+    Point3D currentDerivative;
+    bool calculated;
 };
 
 void InitializeAppState(AppState& state);

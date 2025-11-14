@@ -9,6 +9,9 @@ public:
     virtual Point3D getPoint(double t) const = 0;
     virtual Point3D getDerivative(double t) const = 0;
 
-    // ƒобавлен метод дл€ установки позиции
     virtual void setPosition(const Point3D& pos) = 0;
+
+    virtual void setRotation(const Point3D& rot) = 0;
+
+    virtual Point3D getRotation() const = 0;
 };

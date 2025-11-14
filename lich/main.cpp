@@ -41,12 +41,7 @@ int main()
 
     // Контейнер кривых и состояние приложения
     AppState state;
-    state.selectedCurve = -1;
-    state.panelVisible = true;
-    state.guiMode = false;
-    state.showAddWindow = false;
-    state.showEditWindow = false;
-    state.showTaskWindow = false;
+    InitializeAppState(state);
 
     // Режим камеры
     int cameraMode = CAMERA_FREE;
@@ -82,7 +77,7 @@ int main()
         // Отрисовка 3D сцены
         BeginMode3D(camera);
         DrawGrid(20, 1.0f);
-        DrawAllCurves(state.curves, state.selectedCurve);
+        DrawAllCurves(state.curves, state.selectedCurve, state.currentPoint, state.currentDerivative, state.calculated);
         EndMode3D();
 
         // Отрисовка GUI

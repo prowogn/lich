@@ -8,4 +8,5 @@
 Vector3 ToVec3(const Point3D& p);
 Point3D ToPoint3D(const Vector3& v);
 void DrawCurve3D(const std::shared_ptr<Curve3D>& curve, int segments = 200, Color col = BLUE);
-void DrawAllCurves(const std::vector<std::shared_ptr<Curve3D>>& curves, int selectedCurve);
+void DrawAllCurves(const std::vector<std::shared_ptr<Curve3D>>& curves, int selectedCurve,
+    const Point3D& currentPoint, const Point3D& currentDerivative, bool calculated);
